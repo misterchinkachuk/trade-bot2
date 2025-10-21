@@ -1,0 +1,98 @@
+# Pairs Arbitrage Strategy Configuration
+# Optimized for statistical arbitrage between correlated assets
+
+trading:
+  mode: "paper"
+  base_currency: "USDT"
+  symbols: ["BTCUSDT", "ETHUSDT", "ADAUSDT", "DOTUSDT"]
+  max_position_size: 15000
+  max_daily_drawdown: 0.04  # 4% max daily drawdown
+  max_consecutive_losses: 4
+
+binance:
+  testnet: true
+  base_url: "https://testnet.binance.vision"
+  ws_base_url: "wss://testnet.binance.vision/ws"
+
+strategies:
+  pairs_arbitrage:
+    enabled: true
+    params:
+      # Cointegration parameters
+      cointegration_window: 200  # Lookback window for cointegration
+      min_cointegration_periods: 50  # Minimum periods for valid model
+      
+      # Signal generation
+      z_score_threshold: 2.5     # Z-score threshold for signals
+      z_score_exit: 1.0          # Z-score for exit signals
+      signal_strength_threshold: 0.7  # Minimum signal strength
+      
+      # Position sizing
+      kelly_fraction: 0.15       # Kelly fraction for position sizing
+      max_position_ratio: 0.6    # Maximum 60% of equity per pair
+      min_position_size: 100     # Minimum position size in USDT
+      
+      # Risk management
+      max_correlation: 0.95      # Maximum correlation for pair selection
+      min_correlation: 0.7       # Minimum correlation for pair selection
+      max_volatility_ratio: 3.0  # Maximum volatility ratio between assets
+      
+      # Rebalancing
+      rebalance_interval: 600    # Rebalance every 10 minutes
+      rebalance_threshold: 0.5   # Rebalance when z-score < threshold
+      
+      # Execution
+      execution_delay: 0.1       # 100ms execution delay
+      max_execution_time: 5.0    # Maximum execution time in seconds
+      
+      # Performance
+      target_return_pct: 0.002   # 0.2% target return per trade
+      max_holding_period: 3600   # Maximum holding period (1 hour)
+
+# Pairs configuration
+pairs:
+  - name: "BTC_ETH"
+    asset1: "BTCUSDT"
+    asset2: "ETHUSDT"
+    weight: 1.0
+  - name: "BTC_ADA"
+    asset1: "BTCUSDT"
+    asset2: "ADAUSDT"
+    weight: 0.8
+  - name: "ETH_ADA"
+    asset1: "ETHUSDT"
+    asset2: "ADAUSDT"
+    weight: 0.6
+  - name: "BTC_DOT"
+    asset1: "BTCUSDT"
+    asset2: "DOTUSDT"
+    weight: 0.7
+
+risk:
+  max_leverage: 1.0
+  position_limits:
+    BTCUSDT: 0.1    # 10% max position for BTC
+    ETHUSDT: 0.1    # 10% max position for ETH
+    ADAUSDT: 0.08   # 8% max position for ADA
+    DOTUSDT: 0.08   # 8% max position for DOT
+  stop_loss_pct: 0.008
+  take_profit_pct: 0.015
+
+# Pairs arbitrage specific monitoring
+monitoring:
+  prometheus:
+    enabled: true
+    port: 9090
+  alerts:
+    telegram:
+      enabled: false
+    email:
+      enabled: false
+
+# Detailed logging for pairs arbitrage
+logging:
+  level: "DEBUG"
+  format: "json"
+  file: "logs/pairs_arbitrage_bot.log"
+  max_size: "200MB"
+  backup_count: 7

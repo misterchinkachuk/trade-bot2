@@ -1,0 +1,74 @@
+# Market Maker Strategy Configuration
+# Optimized for providing liquidity with continuous limit orders
+
+trading:
+  mode: "paper"
+  base_currency: "USDT"
+  symbols: ["BTCUSDT", "ETHUSDT", "BNBUSDT"]
+  max_position_size: 10000
+  max_daily_drawdown: 0.02  # 2% max daily drawdown
+  max_consecutive_losses: 5
+
+binance:
+  testnet: true
+  base_url: "https://testnet.binance.vision"
+  ws_base_url: "wss://testnet.binance.vision/ws"
+
+strategies:
+  market_maker:
+    enabled: true
+    params:
+      # Spread configuration
+      spread_pct: 0.0008    # 0.08% spread
+      min_spread_pct: 0.0002  # Minimum 0.02% spread
+      max_spread_pct: 0.002   # Maximum 0.2% spread
+      
+      # Inventory management
+      inventory_bias: 0.15   # Inventory skewing coefficient
+      max_inventory: 2000    # Maximum inventory per symbol
+      inventory_rebalance_threshold: 0.3  # Rebalance when inventory > 30% of max
+      
+      # Order management
+      order_size: 200        # Base order size
+      min_order_size: 50     # Minimum order size
+      max_order_size: 500    # Maximum order size
+      refresh_interval: 3    # Order refresh interval (seconds)
+      
+      # Volatility adjustment
+      volatility_window: 30  # Volatility calculation window
+      volatility_multiplier: 2.0  # Spread adjustment for volatility
+      
+      # Risk management
+      max_orders_per_side: 5  # Maximum orders per side
+      order_timeout: 60      # Order timeout in seconds
+      
+      # Performance
+      target_return_pct: 0.001  # 0.1% target return per trade
+
+risk:
+  max_leverage: 1.0
+  position_limits:
+    BTCUSDT: 0.08   # 8% max position for BTC
+    ETHUSDT: 0.08   # 8% max position for ETH
+    BNBUSDT: 0.05   # 5% max position for BNB
+  stop_loss_pct: 0.005
+  take_profit_pct: 0.01
+
+# Market maker specific monitoring
+monitoring:
+  prometheus:
+    enabled: true
+    port: 9090
+  alerts:
+    telegram:
+      enabled: false
+    email:
+      enabled: false
+
+# Detailed logging for market maker
+logging:
+  level: "DEBUG"
+  format: "json"
+  file: "logs/market_maker_bot.log"
+  max_size: "100MB"
+  backup_count: 5

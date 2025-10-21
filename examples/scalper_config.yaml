@@ -1,0 +1,67 @@
+# Scalper Strategy Configuration
+# Optimized for high-frequency trading with orderbook imbalance
+
+trading:
+  mode: "paper"
+  base_currency: "USDT"
+  symbols: ["BTCUSDT", "ETHUSDT", "ADAUSDT"]
+  max_position_size: 5000
+  max_daily_drawdown: 0.03  # 3% max daily drawdown
+  max_consecutive_losses: 3
+
+binance:
+  testnet: true
+  base_url: "https://testnet.binance.vision"
+  ws_base_url: "wss://testnet.binance.vision/ws"
+
+strategies:
+  scalper:
+    enabled: true
+    params:
+      # EMA parameters
+      ema_short: 3          # Short EMA period
+      ema_long: 12          # Long EMA period
+      
+      # Orderbook imbalance threshold
+      obi_threshold: 0.3    # Higher threshold for more selective signals
+      
+      # Risk management
+      risk_fraction: 0.005  # 0.5% of equity per trade
+      stop_distance: 0.003  # 0.3% stop loss
+      slip_offset: 0.0001   # 0.01% slippage offset
+      
+      # Position sizing
+      max_position_ratio: 0.1  # Max 10% of equity per symbol
+      min_trade_size: 10       # Minimum trade size in USDT
+      
+      # Timing
+      signal_cooldown: 5    # Seconds between signals
+      max_orders_per_minute: 10
+
+risk:
+  max_leverage: 1.0
+  position_limits:
+    BTCUSDT: 0.05   # 5% max position for BTC
+    ETHUSDT: 0.05   # 5% max position for ETH
+    ADAUSDT: 0.03   # 3% max position for ADA
+  stop_loss_pct: 0.003
+  take_profit_pct: 0.006
+
+# Performance monitoring
+monitoring:
+  prometheus:
+    enabled: true
+    port: 9090
+  alerts:
+    telegram:
+      enabled: false
+    email:
+      enabled: false
+
+# Logging for scalper
+logging:
+  level: "INFO"
+  format: "json"
+  file: "logs/scalper_bot.log"
+  max_size: "50MB"
+  backup_count: 3

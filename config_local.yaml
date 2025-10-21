@@ -1,0 +1,114 @@
+# Binance Trading Bot Configuration
+# Copy to config_local.yaml and customize for your environment
+
+# Trading Configuration
+trading:
+  mode: "paper"  # paper, live, backtest
+  base_currency: "USDT"
+  symbols: ["BTCUSDT", "ETHUSDT"]
+  max_position_size: 10000  # Maximum position size in base currency
+  max_daily_drawdown: 0.05  # 5% maximum daily drawdown
+  max_consecutive_losses: 5
+
+# Binance API Configuration
+binance:
+  testnet: false  # Use testnet for paper trading
+  base_url: "https://testnet.binance.vision"  # Testnet URL
+  ws_base_url: "wss://testnet.binance.vision/ws"
+  # API credentials will be provided at runtime or via environment variables
+  # api_key: "your_api_key_here"
+  # api_secret: "your_api_secret_here"
+
+# Database Configuration
+database:
+  postgres:
+    host: "localhost"
+    port: 5432
+    database: "trading_bot"
+    username: "trading_bot"
+    password: "secure_password"
+    pool_size: 10
+    max_overflow: 20
+  
+  redis:
+    host: "localhost"
+    port: 6379
+    database: 0
+    password: null
+    max_connections: 10
+
+# Risk Management
+risk:
+  max_leverage: 1.0  # Maximum leverage (1.0 = no leverage)
+  position_limits:
+    BTCUSDT: 0.1  # Maximum 10% of equity per symbol
+    ETHUSDT: 0.1
+  stop_loss_pct: 0.02  # 2% stop loss
+  take_profit_pct: 0.04  # 4% take profit
+
+# Strategy Configuration
+strategies:
+  scalper:
+    enabled: true
+    params:
+      ema_short: 5
+      ema_long: 20
+      obi_threshold: 0.25
+      risk_fraction: 0.01
+      stop_distance: 0.005
+  
+  market_maker:
+    enabled: false
+    params:
+      spread_pct: 0.001
+      inventory_bias: 0.1
+      refresh_interval: 5
+      max_inventory: 1000
+  
+  pairs_arbitrage:
+    enabled: false
+    params:
+      cointegration_window: 100
+      z_score_threshold: 2.0
+      kelly_fraction: 0.1
+      max_position_ratio: 0.5
+
+# Backtesting Configuration
+backtest:
+  start_date: "2024-01-01"
+  end_date: "2024-12-31"
+  initial_capital: 10000
+  commission: 0.001  # 0.1% commission
+  slippage: 0.0005  # 0.05% slippage
+
+# Dashboard Configuration
+dashboard:
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+  secret_key: "your_secret_key_here"
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "json"
+  file: "logs/trading_bot.log"
+  max_size: "10MB"
+  backup_count: 5
+
+# Monitoring Configuration
+monitoring:
+  prometheus:
+    enabled: true
+    port: 9090
+  alerts:
+    telegram:
+      enabled: false
+      bot_token: "your_bot_token"
+      chat_id: "your_chat_id"
+    email:
+      enabled: false
+      smtp_server: "smtp.gmail.com"
+      smtp_port: 587
+      username: "your_email@gmail.com"
+      password: "your_app_password"

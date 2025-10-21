@@ -1,0 +1,43 @@
+[Unit]
+Description=Binance Trading Bot
+After=network.target postgresql.service redis.service
+Wants=postgresql.service redis.service
+
+[Service]
+Type=simple
+User=trading_bot
+Group=trading_bot
+WorkingDirectory=/opt/trading_bot
+ExecStart=/opt/trading_bot/venv/bin/python run.py --mode paper
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=trading_bot
+
+# Environment variables
+Environment=TRADING_MODE=paper
+Environment=DB_HOST=localhost
+Environment=DB_PORT=5432
+Environment=DB_NAME=trading_bot
+Environment=DB_USER=trading_bot
+Environment=DB_PASSWORD=secure_password
+Environment=REDIS_HOST=localhost
+Environment=REDIS_PORT=6379
+Environment=REDIS_DB=0
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/trading_bot/logs
+ReadWritePaths=/opt/trading_bot/data
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+[Install]
+WantedBy=multi-user.target
